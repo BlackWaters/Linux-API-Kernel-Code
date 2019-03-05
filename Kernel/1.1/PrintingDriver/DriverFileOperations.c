@@ -29,14 +29,18 @@ ssize_t DriverRead(struct file *pslFileStruct, char __user *pBuffer, size_t nCou
 
 ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size_t nCount, loff_t *pOffset)
 {
+    printk(pBuffer);
 	DEBUG_PRINT(DEVICE_NAME ": write invoked, do nothing\n");
 	return 0;
 }
 
 long DriverIOControl(struct file *pslFileStruct, unsigned int uiCmd, unsigned long ulArg)
 {
+    unsigned int a=(int) uiCmd,b=(int) ulArg,c;
+    c=a+b;
+    printk("The Answer is %u\n",c);
 	DEBUG_PRINT(DEVICE_NAME ": ioctl invoked, do nothing\n");
-	return 0;
+	return c;
 }
 
 int DriverMMap(struct file *pslFileStruct, struct vm_area_struct *pslVirtualMemoryArea)
@@ -44,3 +48,6 @@ int DriverMMap(struct file *pslFileStruct, struct vm_area_struct *pslVirtualMemo
 	DEBUG_PRINT(DEVICE_NAME ": mmap invoked, do nothing\n");
 	return 0;
 }
+
+
+

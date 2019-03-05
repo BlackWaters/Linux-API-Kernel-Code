@@ -16,6 +16,7 @@ struct SLDriverParameters
 	struct class *pslDriverClass;
 	dev_t uiDeviceNumber;
 	struct cdev slCharDevice;
+    char *MsgBuffer;
 };
 
 extern struct SLDriverParameters gslDriverParameters;

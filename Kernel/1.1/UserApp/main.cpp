@@ -30,6 +30,8 @@ int main()
 		return -1;	
 	}
 
+    ret=ioctl(fd,1,2);
+    printf("%d\n",ret);
 	close(fd);
 
 	return 0;
