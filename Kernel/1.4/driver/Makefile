@@ -1,10 +1,9 @@
 ifneq ($(KERNELRELEASE),)
 	obj-m := PrintModule.o
-	PrintModule-objs := DriverMain.o DriverFileOperations.o ToolFunctions.o
+	PrintModule-objs := DriverMain.o DriverFileOperations.o
 EXTRA_CFLAGS := -DTEST_DEBUG -ggdb -O0
 else
 	KERNELDIR ?= /lib/modules/$(shell uname -r)/build
-	#KERNELDIR ?= /root/kernelsrc/linux-3.13
 	PWD := $(shell pwd)
 default:
 	$(MAKE) -C $(KERNELDIR) M=$(PWD) modules
