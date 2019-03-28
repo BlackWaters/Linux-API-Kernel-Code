@@ -40,11 +40,11 @@ ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size
 	pUsage = this_cpu_ptr((long *)(&gUsage));
 	
 	DEBUG_PRINT(DEVICE_NAME ": pUsage = 0x%lx", (unsigned long)pUsage);
-
+/*
 	for(i = 0; i < 10; i++)
 	{
 		DEBUG_PRINT(DEVICE_NAME ": CPU %d base = %lx\n", i, __per_cpu_offset[i]);
-	}
+	}*/
 
 	DEBUG_PRINT(DEVICE_NAME ": NR_CPUS = %d\n", NR_CPUS);
 

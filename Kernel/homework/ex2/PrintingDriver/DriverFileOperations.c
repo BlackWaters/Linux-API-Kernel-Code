@@ -12,7 +12,7 @@
 
 //int cnt=0;
 //DEFINE_MUTEX(mymutex);
-DEFINE_PER_CPU(int,cnt);
+DEFINE_PER_CPU(int,cnt)=0;
 
 
 int DriverOpen(struct inode *pslINode, struct file *pslFileStruct)
@@ -46,39 +46,45 @@ long DriverIOControl(struct file *pslFileStruct, unsigned int uiCmd, unsigned lo
     //c=a+b;
     //printk("The Answer is %u\n",c);
     //mutex_lock(&mymutex);
-    int *ptr = this_cpu_ptr((int *)(&cnt));
+    preempt_disable();
+    int *ptr = this_cpu_ptr((int *)&cnt);
     DEBUG_PRINT("The uiCmd: %d\n",uiCmd);
     if (uiCmd==101)
     {
 	    int ret=0;
+        int j=0;
+        
 	    for_each_online_cpu(j)
 	    {
 		 //   DEBUG_PRINT(DEVICE_NAME " CPU %d per cpu base = %lx\n", j, __per_cpu_offset[j]);
-	    	ret+=*(__per_cpu_offset[j]+ptr);
+	    	ret+=(per_cpu(cnt,j));
 	    }
 	    DEBUG_PRINT("The total pthread is :%d\n",ret);
+        preempt_enable();
 	    return ret;
     }
     else if (uiCmd==0)
     {
 	    //int ret=0;
-	    for_each_online_cpu(j)
-	    {
-		 //   DEBUG_PRINT(DEVICE_NAME " CPU %d per cpu base = %lx\n", j, __per_cpu_offset[j]);
-	    	*(__per_cpu_offset[j]+ptr)=0;
-	    }
+        int j=0;
+        for_each_online_cpu(j)
+        {
+            per_cpu(cnt,j)=50;
+        }
         DEBUG_PRINT("Clear cnt.\n");
     }
     else 
     {
-        int ptr=get_cpu_var(cnt);
-        ptr++;
-        put_cpu_var(cnt);
-        DEBUG_PRINT("Inc cnt success,cnt: %d\n",ptr); 
+        //int ptr=++get_cpu_var(cnt);
+        //put_cpu_var(cnt);
+        (*ptr)++;
+
+        DEBUG_PRINT("Inc cnt success,cnt: %d\n",*ptr); 
     }
 	//DEBUG_PRINT(DEVICE_NAME ": ioctl invoked, do nothing\n");
     //mutex_unlock(&mymutex);
-	return cnt;
+    preempt_enable();
+	return *ptr;
 }
 
 int DriverMMap(struct file *pslFileStruct, struct vm_area_struct *pslVirtualMemoryArea)
