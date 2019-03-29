@@ -9,6 +9,8 @@
 #include "DriverMain.h"
 #include "ToolFunctions.h"
 
+int cnt=0;
+
 int DriverOpen(struct inode *pslINode, struct file *pslFileStruct)
 {
 	DEBUG_PRINT(DEVICE_NAME ": open invoked, do nothing\n");
