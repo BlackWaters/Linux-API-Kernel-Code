@@ -69,7 +69,7 @@ long DriverIOControl(struct file *pslFileStruct, unsigned int uiCmd, unsigned lo
         int j=0;
         for_each_online_cpu(j)
         {
-            per_cpu(cnt,j)=50;
+            per_cpu(cnt,j)=0;
         }
         DEBUG_PRINT("Clear cnt.\n");
     }

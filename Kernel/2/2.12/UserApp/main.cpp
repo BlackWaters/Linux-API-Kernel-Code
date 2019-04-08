@@ -32,17 +32,17 @@ void *Use(void *arg)
 	close(fd);
     return (void *)0;
 }
-
+/*
 void createThread()
 {
     pthread_t pid[10];
     for (int i=0;i<10;i++) pthread_create(&pid[i],NULL,Use,NULL);
     return ;
-}
+}*/
 
 int main()
 {
-    createThread();
+//    createThread();
 	int fd = 0;
 	int ret;
 
