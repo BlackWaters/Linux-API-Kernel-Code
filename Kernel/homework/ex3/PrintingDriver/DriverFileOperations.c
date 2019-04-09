@@ -41,6 +41,10 @@ ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size
 
 	DEBUG_PRINT(DEVICE_NAME ": write invoked, do nothing\n");
 
+    unsigned long cr3;
+    asm volatile("mov %%cr3, %0\n\t" : "=r" (cr3), "=m" (__force_order));
+
+
 	asm volatile ("mov %%cs, %0 \n\t" : "=m"(cs));
 	asm volatile ("mov %%ds, %0 \n\t" : "=m"(ds));
 	asm volatile ("mov %%ss, %0 \n\t" : "=m"(ss));
