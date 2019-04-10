@@ -37,9 +37,11 @@ ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size
 	int i;
 	unsigned int high, low;
 	unsigned int high1, low1;
+    char Ptr[20]="Hello World.";
 	char gdtr[10] = {0};
 
 	DEBUG_PRINT(DEVICE_NAME ": write invoked, do nothing\n");
+    DEBUG_PRINT("String val address: %x\n",&Ptr);
 
     unsigned long cr3;
     asm volatile("mov %%cr3, %0\n\t" : "=r" (cr3), "=m" (__force_order));
