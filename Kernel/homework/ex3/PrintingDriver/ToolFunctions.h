@@ -12,5 +12,6 @@
 #endif
 
 void MEM_PRINT(unsigned long addr, unsigned long size);
+unsigned long ShowPyhsicADDR(unsigned long addr);
 
 #endif

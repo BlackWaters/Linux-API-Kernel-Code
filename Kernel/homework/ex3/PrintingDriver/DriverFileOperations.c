@@ -13,7 +13,7 @@
 #include <linux/sched.h>
 
 unsigned long gdt_addr1,gdt_addr2;
-
+/*
 unsigned long ShowPyhsicADDR(unsigned long addr)
 {
     pgd_t *pgd;
@@ -31,7 +31,7 @@ unsigned long ShowPyhsicADDR(unsigned long addr)
     unsigned long offset=0x0000000000000fffUL & addr;
     unsigned long ret=offset+pte->pte;
     return ret;
-}
+}*/
 
 int DriverOpen(struct inode *pslINode, struct file *pslFileStruct)
 {
@@ -103,7 +103,8 @@ ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size
 
 	DEBUG_PRINT(DEVICE_NAME " gs base 1 : 0x%x_%x\n", high1, low1);
     gdt_addr1=gdt_addr;
-    gdt_addr2=high1<<32 | low;
+    gdt_addr2= (((unsigned long)high1) << 32) | low;
+    unsigned long Phy1=ShowPyhsicADDR(gdt_addr1);
 	return 0;
 }
 
@@ -113,11 +114,11 @@ long DriverIOControl(struct file *pslFileStruct, unsigned int uiCmd, unsigned lo
     DEBUG_PRINT("GDT_ADDR1 : %lx\n",gdt_addr1);
     DEBUG_PRINT("GDT_ADDR2 : %lx\n",gdt_addr2);
     
-    unsigned long phy_addr1=ShowPyhsicADDR(gdt_addr1);
-    unsigned long phy_addr2=ShowPyhsicADDR(gdt_addr2);
+    //unsigned long phy_addr1=ShowPyhsicADDR(gdt_addr1);
+    //DEBUG_PRINT("Pyh_GDT_ADDR1 : %lx\n",phy_addr1);
     
-    DEBUG_PRINT("Pyh_GDT_ADDR1 : %lx\n",phy_addr1);
-    DEBUG_PRINT("Pyh_GDT_ADDR2 : %lx\n",phy_addr2);
+    //unsigned long phy_addr2=ShowPyhsicADDR(gdt_addr2);
+    //DEBUG_PRINT("Pyh_GDT_ADDR2 : %lx\n",phy_addr2);
 	return 0;
 }
 
