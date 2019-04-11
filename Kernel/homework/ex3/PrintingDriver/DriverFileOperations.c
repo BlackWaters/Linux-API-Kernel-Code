@@ -10,6 +10,28 @@
 #include "DriverFileOperations.h"
 #include "DriverMain.h"
 #include "ToolFunctions.h"
+#include <linux/sched.h>
+
+unsigned long gdt_addr1,gdt_addr2;
+
+unsigned long ShowPyhsicADDR(unsigned long addr)
+{
+    pgd_t *pgd;
+    pud_t *pud;
+    pmd_t *pmd;
+    pte_t *pte;
+
+    pgd = pgd_offset(current->mm,addr);
+
+    pud = pud_offset(pgd,addr);
+    
+    pmd=pmd_offset(pud,addr);
+    pte=pte_offset_kernel(pmd,addr);
+
+    unsigned long offset=0x0000000000000fffUL & addr;
+    unsigned long ret=offset+pte->pte;
+    return ret;
+}
 
 int DriverOpen(struct inode *pslINode, struct file *pslFileStruct)
 {
@@ -80,13 +102,22 @@ ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size
 	rdmsr(MSR_GS_BASE, low1, high1);
 
 	DEBUG_PRINT(DEVICE_NAME " gs base 1 : 0x%x_%x\n", high1, low1);
-
+    gdt_addr1=gdt_addr;
+    gdt_addr2=high1<<32 | low;
 	return 0;
 }
 
 long DriverIOControl(struct file *pslFileStruct, unsigned int uiCmd, unsigned long ulArg)
 {
 	DEBUG_PRINT(DEVICE_NAME ": ioctl invoked, do nothing\n");
+    DEBUG_PRINT("GDT_ADDR1 : %lx\n",gdt_addr1);
+    DEBUG_PRINT("GDT_ADDR2 : %lx\n",gdt_addr2);
+    
+    unsigned long phy_addr1=ShowPyhsicADDR(gdt_addr1);
+    unsigned long phy_addr2=ShowPyhsicADDR(gdt_addr2);
+    
+    DEBUG_PRINT("Pyh_GDT_ADDR1 : %lx\n",phy_addr1);
+    DEBUG_PRINT("Pyh_GDT_ADDR2 : %lx\n",phy_addr2);
 	return 0;
 }
 

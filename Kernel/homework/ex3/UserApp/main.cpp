@@ -29,7 +29,13 @@ int main()
 		close(fd);
 		return -1;	
 	}
-
+    ret=ioctl(fd,0,0);
+    if (ret<0) 
+    {
+        cerr << strerror(errno) <<endl;
+        close(fd);
+        return -1;
+    }
 	close(fd);
 
 	return 0;
