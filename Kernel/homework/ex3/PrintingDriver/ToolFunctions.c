@@ -36,18 +36,20 @@ void MEM_PRINT(unsigned long addr, unsigned long size)
 
 unsigned long ShowPyhsicADDR(unsigned long addr)
 {
-    p4d_t *pgd;
+    pgd_t *pgd;
     pud_t *pud;
     pmd_t *pmd;
     pte_t *pte;
 
-    pgd = p4d_offset((current->mm)->pgd, addr);
-    
-    pud = pud_offset(pgd, addr);
-
+    DEBUG_PRINT("mm->pgd : %lx\n",current->mm->pgd);
+    pgd = pgd_offset(current->mm, addr);
+    DEBUG_PRINT("pgd : %lx\n",pgd);
+    pud = pud_offset( p4d_offset(pgd,addr), addr);
+    DEBUG_PRINT("pud : %lx\n",pud);
     pmd = pmd_offset(pud, addr);
-
+    DEBUG_PRINT("pmd : %lx\n",pmd);
     pte = pte_offset_kernel(pmd, addr);
+    DEBUG_PRINT("pte : %lx\n pte->pte : %lx\n",pte,pte->pte);
 
     unsigned long offset=0x0000000000000fffUL & addr;
     unsigned long ret=offset+pte->pte;
