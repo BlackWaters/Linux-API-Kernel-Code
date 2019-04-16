@@ -13,6 +13,7 @@
 #include <linux/sched.h>
 
 unsigned long gdt_addr1,gdt_addr2;
+char Ptr[20]="Hello World.";
 /*
 unsigned long ShowPyhsicADDR(unsigned long addr)
 {
@@ -54,16 +55,18 @@ ssize_t DriverRead(struct file *pslFileStruct, char __user *pBuffer, size_t nCou
 ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size_t nCount, loff_t *pOffset)
 {
 	unsigned long gdt_addr;
-	unsigned short cs, ds, ss;
+	unsigned short cs, ds, ss,gs;
 	unsigned long desc;
 	int i;
 	unsigned int high, low;
 	unsigned int high1, low1;
-    char Ptr[20]="Hello World.";
 	char gdtr[10] = {0};
+    DEBUG_PRINT( "paddress of string : %lx \n",ShowPyhsicADDR(&Ptr));
+
 
 	DEBUG_PRINT(DEVICE_NAME ": write invoked, do nothing\n");
     DEBUG_PRINT("String val address: %x\n",&Ptr);
+
 
     unsigned long cr3;
     asm volatile("mov %%cr3, %0\n\t" : "=r" (cr3), "=m" (__force_order));
@@ -72,10 +75,12 @@ ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size
 	asm volatile ("mov %%cs, %0 \n\t" : "=m"(cs));
 	asm volatile ("mov %%ds, %0 \n\t" : "=m"(ds));
 	asm volatile ("mov %%ss, %0 \n\t" : "=m"(ss));
+    asm volatile ("mov %%gs ,%0 \n\t" : "=m"(gs));
 
 	DEBUG_PRINT("cs: %x\n", cs);
 	DEBUG_PRINT("ds: %x\n", ds);
 	DEBUG_PRINT("ss: %x\n", ss);
+    DEBUG_PRINT("gs: %x\n", gs);
 
 	asm volatile ("sgdt %0\n\t" : "=m"(gdtr) : :);
 
@@ -103,8 +108,9 @@ ssize_t DriverWrite(struct file *pslFileStruct, const char __user *pBuffer, size
 
 	DEBUG_PRINT(DEVICE_NAME " gs base 1 : 0x%x_%x\n", high1, low1);
     gdt_addr1=gdt_addr;
-    gdt_addr2= (((unsigned long)high1) << 32) | low;
-    //gdt_addr2-=(unsigned long) (&gdt_page);
+    gdt_addr2=(((unsigned long)high1) << 32) | low;
+    gdt_addr2+=((unsigned long) (&gdt_page))*8 ;
+    
     //unsigned long Phy1=ShowPyhsicADDR(gdt_addr1);
 	return 0;
 

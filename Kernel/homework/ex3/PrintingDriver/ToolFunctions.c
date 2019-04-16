@@ -44,14 +44,18 @@ unsigned long ShowPyhsicADDR(unsigned long addr)
     DEBUG_PRINT("mm->pgd : %lx\n",current->mm->pgd);
     pgd = pgd_offset(current->mm, addr);
     DEBUG_PRINT("pgd : %lx\n",pgd);
-    pud = pud_offset( p4d_offset(pgd,addr), addr);
+    pud = pud_offset((p4d_t*)  pgd, addr);
     DEBUG_PRINT("pud : %lx\n",pud);
     pmd = pmd_offset(pud, addr);
     DEBUG_PRINT("pmd : %lx\n",pmd);
     pte = pte_offset_kernel(pmd, addr);
     DEBUG_PRINT("pte : %lx\n pte->pte : %lx\n",pte,pte->pte);
 
+    unsigned long mask=0x000ffffffffff000UL;
+    //DEBUG_PRINT("mask : %lx\n",mask);
     unsigned long offset=0x0000000000000fffUL & addr;
-    unsigned long ret=offset+pte->pte;
+    //DEBUG_PRINT("offset : %lx\n",offset);
+    unsigned long ret=offset | ((unsigned long) (pte->pte) & mask ) ;
+    //DEBUG_PRINT("pte address : %lx\n", pte->pte & PAGE_MASK);
     return ret;
 }
